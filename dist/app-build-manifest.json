@@ -1,0 +1,107 @@
+{
+  "pages": {
+    "/_not-found/page": [
+      "static/chunks/webpack-2d7fc65767e6ee87.js",
+      "static/chunks/4bd1b696-9f0a5064d9a14967.js",
+      "static/chunks/517-6dea21906c1311ae.js",
+      "static/chunks/main-app-8076cb8f402662d8.js",
+      "static/chunks/app/_not-found/page-cc488cfa7b02646a.js"
+    ],
+    "/api/login/route": [
+      "static/chunks/webpack-2d7fc65767e6ee87.js",
+      "static/chunks/4bd1b696-9f0a5064d9a14967.js",
+      "static/chunks/517-6dea21906c1311ae.js",
+      "static/chunks/main-app-8076cb8f402662d8.js",
+      "static/chunks/app/api/login/route-628ab416991e8ed4.js"
+    ],
+    "/api/otp/route": [
+      "static/chunks/webpack-2d7fc65767e6ee87.js",
+      "static/chunks/4bd1b696-9f0a5064d9a14967.js",
+      "static/chunks/517-6dea21906c1311ae.js",
+      "static/chunks/main-app-8076cb8f402662d8.js",
+      "static/chunks/app/api/otp/route-4ea830ad013d4528.js"
+    ],
+    "/api/search-location/route": [
+      "static/chunks/webpack-2d7fc65767e6ee87.js",
+      "static/chunks/4bd1b696-9f0a5064d9a14967.js",
+      "static/chunks/517-6dea21906c1311ae.js",
+      "static/chunks/main-app-8076cb8f402662d8.js",
+      "static/chunks/app/api/search-location/route-6e3cb7c89dfd3023.js"
+    ],
+    "/layout": [
+      "static/chunks/webpack-2d7fc65767e6ee87.js",
+      "static/chunks/4bd1b696-9f0a5064d9a14967.js",
+      "static/chunks/517-6dea21906c1311ae.js",
+      "static/chunks/main-app-8076cb8f402662d8.js",
+      "static/css/ad602fe17edf9e92.css",
+      "static/chunks/app/layout-4e88cdde30b9155f.js"
+    ],
+    "/istasyon/[id]/page": [
+      "static/chunks/webpack-2d7fc65767e6ee87.js",
+      "static/chunks/4bd1b696-9f0a5064d9a14967.js",
+      "static/chunks/517-6dea21906c1311ae.js",
+      "static/chunks/main-app-8076cb8f402662d8.js",
+      "static/chunks/582-812891b9a432d5f7.js",
+      "static/chunks/377-e3f8b6a0133c4008.js",
+      "static/chunks/556-43d08642b7c32baf.js",
+      "static/chunks/app/istasyon/[id]/page-51076dcca79521da.js"
+    ],
+    "/login/page": [
+      "static/chunks/webpack-2d7fc65767e6ee87.js",
+      "static/chunks/4bd1b696-9f0a5064d9a14967.js",
+      "static/chunks/517-6dea21906c1311ae.js",
+      "static/chunks/main-app-8076cb8f402662d8.js",
+      "static/chunks/582-812891b9a432d5f7.js",
+      "static/chunks/app/login/page-f4193204cddf121f.js"
+    ],
+    "/map/page": [
+      "static/chunks/webpack-2d7fc65767e6ee87.js",
+      "static/chunks/4bd1b696-9f0a5064d9a14967.js",
+      "static/chunks/517-6dea21906c1311ae.js",
+      "static/chunks/main-app-8076cb8f402662d8.js",
+      "static/chunks/4e6af11a-e7c321f89a0fd8bd.js",
+      "static/chunks/582-812891b9a432d5f7.js",
+      "static/chunks/377-e3f8b6a0133c4008.js",
+      "static/chunks/556-43d08642b7c32baf.js",
+      "static/chunks/666-7a786afebd2b6225.js",
+      "static/chunks/app/map/page-ae4cf92be1ce6498.js"
+    ],
+    "/profil/page": [
+      "static/chunks/webpack-2d7fc65767e6ee87.js",
+      "static/chunks/4bd1b696-9f0a5064d9a14967.js",
+      "static/chunks/517-6dea21906c1311ae.js",
+      "static/chunks/main-app-8076cb8f402662d8.js",
+      "static/chunks/582-812891b9a432d5f7.js",
+      "static/chunks/377-e3f8b6a0133c4008.js",
+      "static/chunks/556-43d08642b7c32baf.js",
+      "static/chunks/702-9d6f09b03f56cd31.js",
+      "static/chunks/app/profil/page-a06ef2243e08c86c.js"
+    ],
+    "/page": [
+      "static/chunks/webpack-2d7fc65767e6ee87.js",
+      "static/chunks/4bd1b696-9f0a5064d9a14967.js",
+      "static/chunks/517-6dea21906c1311ae.js",
+      "static/chunks/main-app-8076cb8f402662d8.js",
+      "static/chunks/app/page-3b51246aa0761cda.js"
+    ],
+    "/tarifeler/page": [
+      "static/chunks/webpack-2d7fc65767e6ee87.js",
+      "static/chunks/4bd1b696-9f0a5064d9a14967.js",
+      "static/chunks/517-6dea21906c1311ae.js",
+      "static/chunks/main-app-8076cb8f402662d8.js",
+      "static/chunks/582-812891b9a432d5f7.js",
+      "static/chunks/app/tarifeler/page-988f2bb2ccafccce.js"
+    ],
+    "/yol-planlama/page": [
+      "static/chunks/webpack-2d7fc65767e6ee87.js",
+      "static/chunks/4bd1b696-9f0a5064d9a14967.js",
+      "static/chunks/517-6dea21906c1311ae.js",
+      "static/chunks/main-app-8076cb8f402662d8.js",
+      "static/chunks/582-812891b9a432d5f7.js",
+      "static/chunks/377-e3f8b6a0133c4008.js",
+      "static/chunks/702-9d6f09b03f56cd31.js",
+      "static/chunks/968-614b3ba5ce005232.js",
+      "static/chunks/app/yol-planlama/page-eba9e57f9a625861.js"
+    ]
+  }
+}

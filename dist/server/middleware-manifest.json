@@ -1,0 +1,44 @@
+{
+  "version": 3,
+  "middleware": {
+    "/": {
+      "files": [
+        "server/edge-runtime-webpack.js",
+        "server/middleware.js"
+      ],
+      "name": "middleware",
+      "page": "/",
+      "matchers": [
+        {
+          "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/map(\\.json)?[\\/#\\?]?$",
+          "originalSource": "/map"
+        },
+        {
+          "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/tarifeler(\\.json)?[\\/#\\?]?$",
+          "originalSource": "/tarifeler"
+        },
+        {
+          "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/yol-planlama(\\.json)?[\\/#\\?]?$",
+          "originalSource": "/yol-planlama"
+        },
+        {
+          "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/login(\\.json)?[\\/#\\?]?$",
+          "originalSource": "/login"
+        }
+      ],
+      "wasm": [],
+      "assets": [],
+      "env": {
+        "__NEXT_BUILD_ID": "iC6xH7odj-tK1eVTkfe-G",
+        "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "uRcvYwG6E95f10oyanBYfZvMp0Nk0xh+JhK6bFZ/M9I=",
+        "__NEXT_PREVIEW_MODE_ID": "5d09f9146202d2e5eb59f5ced2367471",
+        "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "88b1c79df7ef976a53b8b7bd06b20cf5748bab37d14547b314e6bb8d7a29c95a",
+        "__NEXT_PREVIEW_MODE_SIGNING_KEY": "2a112c7d904d580be322747872fe2ffb10dddf51dc4c6ea6f8661c6e852d1f87"
+      }
+    }
+  },
+  "functions": {},
+  "sortedMiddleware": [
+    "/"
+  ]
+}

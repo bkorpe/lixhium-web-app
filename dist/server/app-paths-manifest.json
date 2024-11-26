@@ -1,0 +1,14 @@
+{
+  "/api/login/route": "app/api/login/route.js",
+  "/api/otp/route": "app/api/otp/route.js",
+  "/api/search-location/route": "app/api/search-location/route.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/istasyon/[id]/page": "app/istasyon/[id]/page.js",
+  "/login/page": "app/login/page.js",
+  "/map/page": "app/map/page.js",
+  "/profil/page": "app/profil/page.js",
+  "/page": "app/page.js",
+  "/tarifeler/page": "app/tarifeler/page.js",
+  "/yol-planlama/page": "app/yol-planlama/page.js"
+}
