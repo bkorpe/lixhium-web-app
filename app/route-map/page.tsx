@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
@@ -10,7 +10,7 @@ import type { Station } from '../types/station'; // Station tipini map sayfasın
 import StationBottomSheet from '../components/StationBottomSheet';
 
 // Google Maps API anahtarınızı buraya ekleyin
-const GOOGLE_MAPS_API_KEY = "AIzaSyCXzd6Vw1013WnBWh33G_Y1L9ZLY9PyTd8";
+const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!;
 
 // Polyline decoder fonksiyonu
 function decodePolyline(str: string, precision = 5) {
@@ -59,7 +59,8 @@ function decodePolyline(str: string, precision = 5) {
     return coordinates;
 }
 
-export default function RouteMap() {
+// Ana bileşeni Suspense ile sarmalayacağımız için ayrı bir bileşen oluşturalım
+function RouteMapContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const mapRef = useRef<HTMLDivElement>(null);
@@ -481,5 +482,23 @@ export default function RouteMap() {
                 parseSocketInfo={parseSocketInfo}
             />
         </div>
+    );
+}
+
+// Ana bileşen
+export default function RouteMap() {
+    return (
+        <Suspense
+            fallback={
+                <div className="h-screen flex items-center justify-center">
+                    <div className="text-center">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+                        <p className="mt-4">Yükleniyor...</p>
+                    </div>
+                </div>
+            }
+        >
+            <RouteMapContent />
+        </Suspense>
     );
 } 
