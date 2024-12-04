@@ -74,9 +74,31 @@ function RouteMapContent() {
     const [isStationsLoaded, setIsStationsLoaded] = useState(false);
     const [selectedStation, setSelectedStation] = useState<Station | null>(null);
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+    const initMapRef = useRef<boolean>(false); // Harita başlatma durumunu takip etmek için
+    const initAttemptedRef = useRef<boolean>(false);
+
+    // Tüm bağımlılıkları kontrol eden ve haritayı başlatan useEffect
+    useEffect(() => {
+        if (!mapsLoaded || !mapRef.current || !isStationsLoaded || initMapRef.current || initAttemptedRef.current) {
+            return;
+        }
+
+        console.log('All dependencies ready, attempting to initialize map...');
+        console.log({
+            mapsLoaded,
+            hasMapRef: !!mapRef.current,
+            isStationsLoaded,
+            isInitialized: initMapRef.current
+        });
+
+        initAttemptedRef.current = true;
+        initMap();
+    }, [mapsLoaded, isStationsLoaded]);
 
     // Google Maps API'yi yükle
     useEffect(() => {
+        if (initMapRef.current) return; // Zaten başlatılmışsa çık
+
         console.log('Loading Google Maps...');
         const loader = new Loader({
             apiKey: GOOGLE_MAPS_API_KEY,
@@ -88,39 +110,19 @@ function RouteMapContent() {
             .then(() => {
                 console.log('Google Maps loaded successfully');
                 setMapsLoaded(true);
-                setLoading(false);
             })
             .catch((error) => {
                 console.error("Google Maps yükleme hatası:", error);
+            })
+            .finally(() => {
                 setLoading(false);
             });
     }, []);
 
-    // Haritayı başlat
-    useEffect(() => {
-        if (!mapsLoaded || !mapRef.current) return;
-
-        console.log('Initializing map...');
-        try {
-            const mapOptions: google.maps.MapOptions = {
-                zoom: 7,
-                center: { lat: 39.9334, lng: 32.8597 },
-                mapTypeControl: true,
-                streetViewControl: false,
-                fullscreenControl: true,
-                zoomControl: true,
-            };
-
-            const newMap = new google.maps.Map(mapRef.current, mapOptions);
-            console.log('Map initialized successfully');
-            setMap(newMap);
-        } catch (error) {
-            console.error('Error initializing map:', error);
-        }
-    }, [mapsLoaded, mapRef.current]); // mapRef.current değiştiğinde veya mapsLoaded true olduğunda çalışır
-
     // İstasyonları yükle
     useEffect(() => {
+        if (isStationsLoaded) return; // Zaten yüklenmişse çık
+
         console.log('Fetching stations...');
         fetch('https://instatistik.com/lixhium/tum_istasyonlar.php')
             .then(response => response.json())
@@ -139,6 +141,36 @@ function RouteMapContent() {
                 console.error('Error loading stations:', error);
             });
     }, []);
+
+    const initMap = () => {
+        if (!mapRef.current || initMapRef.current) {
+            console.log('Map initialization skipped:', {
+                hasMapRef: !!mapRef.current,
+                isInitialized: initMapRef.current
+            });
+            return;
+        }
+
+        console.log('Initializing map...');
+        try {
+            const mapOptions: google.maps.MapOptions = {
+                zoom: 7,
+                center: { lat: 39.9334, lng: 32.8597 },
+                mapTypeControl: true,
+                streetViewControl: false,
+                fullscreenControl: true,
+                zoomControl: true,
+            };
+
+            const newMap = new google.maps.Map(mapRef.current, mapOptions);
+            console.log('Map initialized successfully');
+            setMap(newMap);
+            initMapRef.current = true;
+        } catch (error) {
+            console.error('Error initializing map:', error);
+            initMapRef.current = false; // Hata durumunda tekrar denenmesine izin ver
+        }
+    };
 
     // Rotayı çek ve çiz - istasyonlar yüklendiğinde
     useEffect(() => {
