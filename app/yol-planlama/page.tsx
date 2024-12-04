@@ -13,10 +13,11 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown, ChevronLeft, Navigation2, Search } from "lucide-react";
+import { ChevronDown, ChevronLeft, Navigation2, Search, MapPin } from "lucide-react";
 import type { User } from '../types/user';
 import type { VehicleModel } from '../types/vehicle';
 import type { LocationFeature, LocationResponse } from '../types/location';
+import { cn } from "@/lib/utils";
 
 export default function RoutePlanning() {
     const router = useRouter();
@@ -31,6 +32,7 @@ export default function RoutePlanning() {
     const [endResults, setEndResults] = useState<LocationFeature[]>([]);
     const [showStartResults, setShowStartResults] = useState(false);
     const [showEndResults, setShowEndResults] = useState(false);
+    const [gettingLocation, setGettingLocation] = useState(false);
 
     // Adres formatlamak için yardımcı fonksiyon
     const formatAddress = (feature: LocationFeature) => {
@@ -179,11 +181,68 @@ export default function RoutePlanning() {
     };
 
     const handleRouteCalculate = () => {
-        console.log('Başlangıç Lokasyonu:', startLocation);
-        console.log('Bitiş Lokasyonu:', endLocation);
-        console.log('Seçili Araç:', primaryVehicle);
+        if (!startLocation || !endLocation || !primaryVehicle) return;
 
-        // Burada rota hesaplama işlemi yapılabilir
+        // URL'leri oluştur
+        const startPoint = `${startLocation.lng},${startLocation.lat}`;
+        const endPoint = `${endLocation.lng},${endLocation.lat}`;
+
+        // Route parametrelerini oluştur
+        const routeParams = {
+            startPoint,
+            endPoint,
+            startCharge,
+            endCharge,
+            vehicleId: primaryVehicle.id,
+            vehicleRange: primaryVehicle.WLTP_menzil
+        };
+
+        // Parametreleri URL'e ekle
+        const queryString = new URLSearchParams(routeParams as any).toString();
+
+        // Yeni sayfaya yönlendir
+        router.push(`/route-map?${queryString}`);
+    };
+
+    const getCurrentLocation = () => {
+        if (!navigator.geolocation) {
+            alert('Tarayıcınız konum özelliğini desteklemiyor.');
+            return;
+        }
+
+        setGettingLocation(true);
+
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                const { latitude, longitude } = position.coords;
+
+                try {
+                    // Koordinatları adrese çevir
+                    const response = await fetch(
+                        `/api/reverse-geocode?lat=${latitude}&lng=${longitude}`
+                    );
+                    const data = await response.json();
+
+                    if (data.features && data.features.length > 0) {
+                        const location = data.features[0];
+                        setStartLocation({
+                            name: formatAddress(location),
+                            lat: latitude,
+                            lng: longitude
+                        });
+                    }
+                } catch (error) {
+                    console.error('Konum çözümleme hatası:', error);
+                } finally {
+                    setGettingLocation(false);
+                }
+            },
+            (error) => {
+                console.error('Konum alma hatası:', error);
+                setGettingLocation(false);
+                alert('Konumunuz alınamadı. Lütfen konum izinlerini kontrol edin.');
+            }
+        );
     };
 
     return (
@@ -214,14 +273,28 @@ export default function RoutePlanning() {
                         {/* Başlangıç Konumu */}
                         <div className="space-y-2 relative">
                             <Label htmlFor="start">Başlangıç Konumu</Label>
-                            <Input
-                                id="start"
-                                placeholder="Nereden?"
-                                value={startLocation?.name || ''}
-                                onChange={handleStartLocationChange}
-                                onFocus={() => setShowStartResults(true)}
-                                className="h-12"
-                            />
+                            <div className="flex gap-2">
+                                <Input
+                                    id="start"
+                                    placeholder="Nereden?"
+                                    value={startLocation?.name || ''}
+                                    onChange={handleStartLocationChange}
+                                    onFocus={() => setShowStartResults(true)}
+                                    className="h-12"
+                                />
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="h-12 w-12 shrink-0"
+                                    onClick={getCurrentLocation}
+                                    disabled={gettingLocation}
+                                >
+                                    <MapPin className={cn(
+                                        "h-5 w-5",
+                                        gettingLocation && "animate-pulse"
+                                    )} />
+                                </Button>
+                            </div>
                             {/* Başlangıç Konumu Sonuçları */}
                             {showStartResults && startResults.length > 0 && (
                                 <div className="absolute z-10 w-full mt-1 bg-white rounded-md shadow-lg border">

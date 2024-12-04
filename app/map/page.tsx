@@ -7,11 +7,14 @@ import Link from 'next/link';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Search, MapIcon, FileText, Navigation, User } from "lucide-react";
+import { Search, MapIcon, FileText, Navigation, User, Settings, Zap } from "lucide-react";
 import { useRouter } from 'next/navigation';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
 const containerStyle = {
     width: '100vw',
@@ -32,6 +35,8 @@ interface Station {
     plugCount: string;
     ac: string;
     dcgreaterthan50: string;
+    brandid: string;
+
 }
 
 // Çok daha agresif cluster ayarları
@@ -116,6 +121,11 @@ export default function MapPage() {
     const searchRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
     const [user, setUser] = useState<any>(null);
+    const [showAvailableOnly, setShowAvailableOnly] = useState(false);
+    const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+    const [showAC, setShowAC] = useState(false);
+    const [showDC, setShowDC] = useState(false);
+    const [showHPC, setShowHPC] = useState(false);
 
     // Marker ikonlarını API yüklendikten sonra oluştur
     useEffect(() => {
@@ -165,7 +175,44 @@ export default function MapPage() {
         });
     }, [isLoaded]);
 
-    // Görünür istasyonları güncelle - daha az istasyon göster
+    // parseSocketInfo fonksiyonunu yukarı taşıyalım
+    const parseSocketInfo = useCallback((description: string) => {
+        // Boş string kontrolü
+        if (!description) return [];
+
+        // Sondaki virgülü temizle ve boş stringleri filtrele
+        const sockets = description.trim().replace(/,+$/, '').split(',').filter(Boolean);
+        const socketPowerMap = new Map<number, number>();
+
+        sockets.forEach(socket => {
+            // Regex'i güncelle
+            const match = socket.trim().match(/(\d+)x(\d+)\s*kW/i);
+            if (match) {
+                const count = parseInt(match[1]);
+                const power = parseInt(match[2]);
+
+                // Mevcut güç değerini al veya 0 kullan
+                const currentCount = socketPowerMap.get(power) || 0;
+                socketPowerMap.set(power, currentCount + count);
+            }
+        });
+
+        // Sonuçları güç değerine göre sırala
+        return Array.from(socketPowerMap.entries())
+            .map(([power, count]) => ({
+                power,
+                count
+            }))
+            .sort((a, b) => b.power - a.power);
+    }, []);
+
+    // İstasyonun HPC olup olmadığını kontrol eden yardımcı fonksiyon
+    const isHPCStation = useCallback((description: string) => {
+        const sockets = parseSocketInfo(description);
+        return sockets.some(socket => socket.power > 180);
+    }, [parseSocketInfo]);
+
+    // Görünür istasyonları güncelle - filtreleri güncelle
     const updateVisibleStations = useCallback(() => {
         if (!map || !bounds || !stations.length) return;
 
@@ -175,12 +222,30 @@ export default function MapPage() {
         const filtered = stations.filter(station => {
             const lat = parseFloat(station.coordslatitude);
             const lng = parseFloat(station.coordslongitude);
-            return bounds.contains({ lat, lng });
+            const isInBounds = bounds.contains({ lat, lng });
+
+            // Tüm filtreleri uygula
+            const matchesAvailability = !showAvailableOnly || station.status === 'Available';
+
+            // Hiçbir tip seçili değilse tümünü göster
+            const noTypeSelected = !showAC && !showDC && !showHPC;
+
+            // HPC kontrolü
+            const isHPC = isHPCStation(station.description);
+
+            // Tip filtresini uygula
+            const matchesType = noTypeSelected || (
+                (showAC && station.description2 === 'AC') ||
+                (showDC && station.description2 === 'DC') ||
+                (showHPC && isHPC)
+            );
+
+            return isInBounds && matchesAvailability && matchesType;
         });
 
         // Zoom seviyesine göre maksimum istasyon sayısını sınırla
         setVisibleStations(filtered.slice(0, maxStations));
-    }, [map, bounds, stations]);
+    }, [map, bounds, stations, showAvailableOnly, showAC, showDC, showHPC, isHPCStation]);
 
     // Harita sınırları değiştiğinde
     const onBoundsChanged = useCallback(() => {
@@ -217,6 +282,7 @@ export default function MapPage() {
                     lng: parseFloat(station.coordslongitude)
                 }));
                 setStations(processedData);
+                console.log('Stations:', processedData);
                 setLoading(false); // Yükleme tamamlandığında durumu güncelle
             });
     }, []);
@@ -243,27 +309,6 @@ export default function MapPage() {
         }
     }, [selectedStation, markerIcons]);
 
-    const parseSocketInfo = useCallback((description: string) => {
-        const sockets = description.split(',').filter(s => s);
-        const socketPowerMap = new Map<number, number>();
-
-        sockets.forEach(socket => {
-            const match = socket.match(/(\d+)x(\d+)kW/);
-            if (match) {
-                const count = parseInt(match[1]);
-                const power = parseInt(match[2]);
-
-                const currentCount = socketPowerMap.get(power) || 0;
-                socketPowerMap.set(power, currentCount + count);
-            }
-        });
-
-        return Array.from(socketPowerMap.entries()).map(([power, count]) => ({
-            power,
-            count
-        })).sort((a, b) => b.power - a.power);
-    }, []);
-
     // Arama sonuçlarını filtrele
     useEffect(() => {
         if (!searchQuery.trim()) {
@@ -288,6 +333,9 @@ export default function MapPage() {
         }
 
         setSelectedStation(station);
+
+        console.log('Selected Station:', station.brandid);
+
         setIsBottomSheetOpen(true);
         setSearchQuery('');
         setIsSearchFocused(false);
@@ -386,6 +434,8 @@ export default function MapPage() {
                                             clusterer={clusterer}
                                             onClick={() => {
                                                 setSelectedStation(station);
+                                                console.log('Selected Station:', station);
+
                                                 setIsBottomSheetOpen(true);
                                             }}
                                         />
@@ -455,6 +505,12 @@ export default function MapPage() {
                                 </Link>
                             </Button>
                             <Button variant="ghost" className="flex items-center gap-3 justify-start h-12" asChild>
+                                <Link href="/sarj-islemlerim" target="_blank">
+                                    <img src="/assets/islemler.svg" alt="Şarj İşlemlerim" className="h-5 w-5" />
+                                    <span>Şarj İşlemlerim</span>
+                                </Link>
+                            </Button>
+                            <Button variant="ghost" className="flex items-center gap-3 justify-start h-12" asChild>
                                 <Link href="/profil" target="_blank">
                                     <img src="/assets/profil_icon.svg" alt="Profil" className="h-5 w-5" />
                                     <span>Profil</span>
@@ -494,9 +550,9 @@ export default function MapPage() {
                 </Card>
 
                 {/* Arama çubuğu ve konum butonu */}
-                <div ref={searchRef} className="flex items-center w-[40%]">
-                    <div className="relative flex-grow">
-                        <Card className="p-0">
+                <div ref={searchRef} className="flex-grow flex flex-col">
+                    <div className="relative flex items-center w-[40%]">
+                        <Card className="p-0 w-full">
                             <div className="relative">
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                                 <Input
@@ -508,61 +564,129 @@ export default function MapPage() {
                                 />
                             </div>
                         </Card>
-                        {/* Arama sonuçları dropdown'u */}
-                        {isSearchFocused && searchResults.length > 0 && (
-                            <Card className="absolute top-full left-0 right-0 mt-1 max-h-[300px] overflow-y-auto border-t z-50">
-                                {searchResults.map((station) => (
+
+                        {/* Butonlar */}
+                        <div className="flex gap-2 ml-2">
+                            {/* Konum butonu */}
+                            <Button
+                                onClick={() => {
+                                    if (userLocation && map) {
+                                        map.panTo(userLocation);
+                                        map.setZoom(15);
+                                    } else {
+                                        navigator.geolocation.getCurrentPosition(
+                                            (position) => {
+                                                const location = {
+                                                    lat: position.coords.latitude,
+                                                    lng: position.coords.longitude
+                                                };
+                                                setUserLocation(location);
+                                                if (map) {
+                                                    map.panTo(location);
+                                                    map.setZoom(15);
+                                                }
+                                            },
+                                            (error) => {
+                                                console.error("Konum alınamadı:", error);
+                                            },
+                                            {
+                                                enableHighAccuracy: true,
+                                                timeout: 5000,
+                                                maximumAge: 0
+                                            }
+                                        );
+                                    }
+                                }}
+                                className="h-12 w-12 rounded-full shadow-lg bg-white"
+                                variant="secondary"
+                            >
+                                <Navigation className="h-5 w-5" />
+                            </Button>
+
+                            {/* Filtreler butonu */}
+                            <Sheet open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
+                                <SheetTrigger asChild>
                                     <Button
-                                        key={station.id}
-                                        variant="ghost"
-                                        className="w-full justify-start px-4 py-3 hover:bg-accent"
-                                        onClick={() => handleStationSelect(station)}
+                                        className="h-12 w-12 rounded-full shadow-lg bg-white"
+                                        variant="secondary"
                                     >
-                                        <div className="text-left">
-                                            <p className="font-medium">{station.name}</p>
-                                            <p className="text-sm text-muted-foreground">{station.address}</p>
-                                        </div>
+                                        <Settings className="h-5 w-5" />
                                     </Button>
-                                ))}
-                            </Card>
-                        )}
+                                </SheetTrigger>
+                                <SheetContent side="right">
+                                    <SheetHeader>
+                                        <SheetTitle>Filtreler</SheetTitle>
+                                    </SheetHeader>
+                                    <div className="py-6 space-y-6">
+                                        {/* İstasyon Durumu */}
+                                        <div className="space-y-4">
+                                            <h4 className="font-medium">İstasyon Durumu</h4>
+                                            <div className="flex items-center space-x-2">
+                                                <Switch
+                                                    checked={showAvailableOnly}
+                                                    onCheckedChange={setShowAvailableOnly}
+                                                />
+                                                <Label>Sadece Müsait İstasyonlar</Label>
+                                            </div>
+                                        </div>
+
+                                        {/* Şarj Tipi */}
+                                        <div className="space-y-4">
+                                            <h4 className="font-medium">Şarj Tipi</h4>
+                                            <div className="grid gap-2">
+                                                <div className="flex items-center space-x-2">
+                                                    <Switch
+                                                        id="ac"
+                                                        checked={showAC}
+                                                        onCheckedChange={setShowAC}
+                                                    />
+                                                    <Label htmlFor="ac">AC</Label>
+                                                </div>
+                                                <div className="flex items-center space-x-2">
+                                                    <Switch
+                                                        id="dc"
+                                                        checked={showDC}
+                                                        onCheckedChange={setShowDC}
+                                                    />
+                                                    <Label htmlFor="dc">DC</Label>
+                                                </div>
+                                                <div className="flex items-center space-x-2">
+                                                    <Switch
+                                                        id="hpc"
+                                                        checked={showHPC}
+                                                        onCheckedChange={setShowHPC}
+                                                    />
+                                                    <Label htmlFor="hpc">HPC (180+ kW)</Label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+
+                                    </div>
+                                </SheetContent>
+                            </Sheet>
+                        </div>
                     </div>
 
-                    {/* Konum butonu */}
-                    <Button
-                        onClick={() => {
-                            if (userLocation && map) {
-                                map.panTo(userLocation);
-                                map.setZoom(15);
-                            } else {
-                                navigator.geolocation.getCurrentPosition(
-                                    (position) => {
-                                        const location = {
-                                            lat: position.coords.latitude,
-                                            lng: position.coords.longitude
-                                        };
-                                        setUserLocation(location);
-                                        if (map) {
-                                            map.panTo(location);
-                                            map.setZoom(15);
-                                        }
-                                    },
-                                    (error) => {
-                                        console.error("Konum alınamadı:", error);
-                                    },
-                                    {
-                                        enableHighAccuracy: true,
-                                        timeout: 5000,
-                                        maximumAge: 0
-                                    }
-                                );
-                            }
-                        }}
-                        className="h-12 w-12 rounded-full shadow-lg ml-2 bg-white"
-                        variant="secondary"
-                    >
-                        <Navigation className="h-5 w-5" />
-                    </Button>
+                    {/* Arama sonuçları dropdown'u */}
+                    {isSearchFocused && searchResults.length > 0 && (
+                        <Card className="absolute top-full left-0 right-0 mt-1 max-h-[400px] overflow-y-auto border-t z-50 w-[45%]">
+                            {searchResults.map((station) => (
+                                <Button
+                                    key={station.id}
+                                    variant="ghost"
+                                    className="w-full justify-start px-4 py-3 hover:bg-accent"
+                                    onClick={() => handleStationSelect(station)}
+                                >
+                                    <div className="text-left">
+                                        <p className="font-medium">{station.name}</p>
+                                        <p className="text-sm text-muted-foreground">{station.address}</p>
+                                    </div>
+                                </Button>
+                            ))}
+                        </Card>
+                    )}
                 </div>
             </div>
         </>
