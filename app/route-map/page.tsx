@@ -189,7 +189,7 @@ function RouteMapContent() {
 
         try {
             const response = await fetch(
-                `http://45.94.148.206:5000/route/v1/driving/${startPoint};${endPoint}?overview=full&geometries=polyline&steps=true`
+                `https://routing.openstreetmap.de/routed-car/route/v1/driving/${startPoint};${endPoint}?overview=full&geometries=polyline&steps=true`
             );
             const data = await response.json();
             console.log('Rota verisi:', data);
