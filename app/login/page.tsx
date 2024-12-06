@@ -136,7 +136,7 @@ export default function Login() {
                                 onClick={handleLogin}
                             >
                                 <LogIn className="h-4 w-4" />
-                                Giri�� Yap
+                                Giriş Yap
                             </Button>
                         </>
                     ) : (

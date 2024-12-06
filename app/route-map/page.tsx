@@ -76,6 +76,7 @@ function RouteMapContent() {
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
     const initMapRef = useRef<boolean>(false); // Harita başlatma durumunu takip etmek için
     const initAttemptedRef = useRef<boolean>(false);
+    const [isSearchingStations, setIsSearchingStations] = useState(false);
 
     // Tüm bağımlılıkları kontrol eden ve haritayı başlatan useEffect
     useEffect(() => {
@@ -288,31 +289,39 @@ function RouteMapContent() {
     }, [mapsLoaded, map]);
 
     // Rota üzerindeki ve yakınındaki istasyonları bul
-    const findNearbyStations = (path: google.maps.LatLngLiteral[]) => {
+    const findNearbyStations = async (path: google.maps.LatLngLiteral[]) => {
         if (!stations.length) {
             console.log('No stations available');
             return;
         }
 
         console.log('Finding nearby stations...');
-        const nearbyStations = stations.filter(station => {
-            const stationLatLng = new google.maps.LatLng(
-                parseFloat(station.coordslatitude),
-                parseFloat(station.coordslongitude)
-            );
+        setIsSearchingStations(true);
 
-            // Rotanın her noktasını kontrol et
-            return path.some(point => {
-                const distance = google.maps.geometry.spherical.computeDistanceBetween(
-                    stationLatLng,
-                    new google.maps.LatLng(point.lat, point.lng)
+        // Küçük bir gecikme ekleyelim ki overlay görünsün
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        try {
+            const nearbyStations = stations.filter(station => {
+                const stationLatLng = new google.maps.LatLng(
+                    parseFloat(station.coordslatitude),
+                    parseFloat(station.coordslongitude)
                 );
-                return distance <= 500;
-            });
-        });
 
-        console.log('Found nearby stations:', nearbyStations.length);
-        setNearbyStations(nearbyStations);
+                return path.some(point => {
+                    const distance = google.maps.geometry.spherical.computeDistanceBetween(
+                        stationLatLng,
+                        new google.maps.LatLng(point.lat, point.lng)
+                    );
+                    return distance <= 500;
+                });
+            });
+
+            console.log('Found nearby stations:', nearbyStations.length);
+            setNearbyStations(nearbyStations);
+        } finally {
+            setIsSearchingStations(false);
+        }
     };
 
     const getMarkerIcon = (station: Station) => {
@@ -501,6 +510,15 @@ function RouteMapContent() {
                         backgroundColor: "#f0f0f0"
                     }}
                 />
+
+                {isSearchingStations && (
+                    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+                        <div className="bg-white/90 rounded-xl px-6 py-4 flex items-center gap-3 shadow-lg">
+                            <div className="animate-spin rounded-full h-5 w-5 border-2 border-primary border-t-transparent"></div>
+                            <p className="text-sm font-medium">Yakındaki istasyonlar aranıyor</p>
+                        </div>
+                    </div>
+                )}
             </main>
 
             {/* Bottom Sheet ekle */}

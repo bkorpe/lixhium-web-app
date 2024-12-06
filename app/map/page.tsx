@@ -467,91 +467,114 @@ export default function MapPage() {
             />
 
             {/* Üst bar - Drawer ve arama */}
-            <div className="absolute top-4 left-4 right-4 z-10 flex items-center gap-4">
-                {/* Drawer Trigger ve Menu */}
-                <Sheet>
-                    <SheetTrigger asChild>
-                        <Button variant="outline" size="icon" className="h-12 w-12">
-                            <Menu className="h-5 w-5" />
-                        </Button>
-                    </SheetTrigger>
-                    <SheetContent className="w-[25vw]" side="left">
-                        <SheetHeader>
-                            <SheetTitle>
-                                <img
-                                    src="/assets/Lix Button Circular.png"
-                                    alt="Lix"
-                                    className="h-12 w-12"
+            <div className="absolute top-4 left-4 right-4 z-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                <div className="flex items-center gap-4">
+                    {/* Drawer Trigger ve Menu */}
+                    <Sheet>
+                        <SheetTrigger asChild>
+                            <Button variant="outline" size="icon" className="h-12 w-12 shrink-0">
+                                <Menu className="h-5 w-5" />
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent className="w-[60vw] sm:w-[25vw]" side="left">
+                            <SheetHeader>
+                                <SheetTitle>
+                                    <img
+                                        src="/assets/Lix Button Circular.png"
+                                        alt="Lix"
+                                        className="h-12 w-12"
+                                    />
+                                </SheetTitle>
+                            </SheetHeader>
+                            <div className="flex flex-col gap-2 mt-8">
+                                <Button
+                                    variant="ghost"
+                                    className="flex items-center gap-3 justify-start h-14 sm:h-12 text-base sm:text-sm"
+                                    asChild
+                                >
+                                    <Link href="/map">
+                                        <img src="/assets/kesfet_icon.svg" alt="Keşfet" className="h-6 w-6 sm:h-5 sm:w-5" />
+                                        <span>Keşfet</span>
+                                    </Link>
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    className="flex items-center gap-3 justify-start h-14 sm:h-12 text-base sm:text-sm"
+                                    asChild
+                                >
+                                    <Link href="/tarifeler" target="_blank">
+                                        <img src="/assets/tarifeler_icon.svg" alt="Tarifeler" className="h-6 w-6 sm:h-5 sm:w-5" />
+                                        <span>Tarifeler</span>
+                                    </Link>
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    className="flex items-center gap-3 justify-start h-14 sm:h-12 text-base sm:text-sm"
+                                    asChild
+                                >
+                                    <Link href="/yol-planlama" target="_blank">
+                                        <img src="/assets/planner_icon.svg" alt="Planla" className="h-6 w-6 sm:h-5 sm:w-5" />
+                                        <span>Planla</span>
+                                    </Link>
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    className="flex items-center gap-3 justify-start h-14 sm:h-12 text-base sm:text-sm"
+                                    asChild
+                                >
+                                    <Link href="/sarj-islemlerim" target="_blank">
+                                        <img src="/assets/islemler.svg" alt="Şarj İşlemlerim" className="h-6 w-6 sm:h-5 sm:w-5" />
+                                        <span>Şarj İşlemlerim</span>
+                                    </Link>
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    className="flex items-center gap-3 justify-start h-14 sm:h-12 text-base sm:text-sm"
+                                    asChild
+                                >
+                                    <Link href="/profil" target="_blank">
+                                        <img src="/assets/profil_icon.svg" alt="Profil" className="h-6 w-6 sm:h-5 sm:w-5" />
+                                        <span>Profil</span>
+                                    </Link>
+                                </Button>
+                            </div>
+                        </SheetContent>
+                    </Sheet>
+
+                    {/* Kullanıcı bilgileri */}
+                    <Card
+                        className="flex items-center gap-3 p-0 cursor-pointer hover:bg-accent transition-colors h-12 w-full sm:w-auto"
+                        onClick={() => router.push('/profil')}
+                    >
+                        <div className="flex items-center gap-3 px-3 h-full w-full">
+                            <Avatar className="h-7 w-7 shrink-0">
+                                <AvatarImage
+                                    src={user?.vehiclemodels?.[0]?.image ?
+                                        `https://instatistik.com/lixhium/${user.vehiclemodels[0].image}` :
+                                        ''}
+                                    alt="Araç"
+                                    className="object-contain"
                                 />
-                            </SheetTitle>
-                        </SheetHeader>
-                        <div className="flex flex-col gap-4 mt-8">
-                            <Button variant="ghost" className="flex items-center gap-3 justify-start h-12" asChild>
-                                <Link href="/map">
-                                    <img src="/assets/kesfet_icon.svg" alt="Keşfet" className="h-5 w-5" />
-                                    <span>Keşfet</span>
-                                </Link>
-                            </Button>
-                            <Button variant="ghost" className="flex items-center gap-3 justify-start h-12" asChild>
-                                <Link href="/tarifeler" target="_blank">
-                                    <img src="/assets/tarifeler_icon.svg" alt="Tarifeler" className="h-5 w-5" />
-                                    <span>Tarifeler</span>
-                                </Link>
-                            </Button>
-                            <Button variant="ghost" className="flex items-center gap-3 justify-start h-12" asChild>
-                                <Link href="/yol-planlama" target="_blank">
-                                    <img src="/assets/planner_icon.svg" alt="Planla" className="h-5 w-5" />
-                                    <span>Planla</span>
-                                </Link>
-                            </Button>
-                            <Button variant="ghost" className="flex items-center gap-3 justify-start h-12" asChild>
-                                <Link href="/sarj-islemlerim" target="_blank">
-                                    <img src="/assets/islemler.svg" alt="Şarj İşlemlerim" className="h-5 w-5" />
-                                    <span>Şarj İşlemlerim</span>
-                                </Link>
-                            </Button>
-                            <Button variant="ghost" className="flex items-center gap-3 justify-start h-12" asChild>
-                                <Link href="/profil" target="_blank">
-                                    <img src="/assets/profil_icon.svg" alt="Profil" className="h-5 w-5" />
-                                    <span>Profil</span>
-                                </Link>
-                            </Button>
+                                <AvatarFallback>
+                                    {user?.vehiclemodels?.[0]?.brandname?.[0] || 'A'}
+                                </AvatarFallback>
+                            </Avatar>
+                            <div className="flex flex-col justify-center truncate">
+                                <span className="text-sm font-medium leading-none truncate">
+                                    {user?.name}
+                                </span>
+                                <span className="text-xs text-muted-foreground leading-none mt-1 truncate">
+                                    {user?.vehiclemodels?.[0]?.brandname} {user?.vehiclemodels?.[0]?.name}
+                                </span>
+                            </div>
                         </div>
-                    </SheetContent>
-                </Sheet>
+                    </Card>
+                </div>
 
-                {/* Kullanıcı bilgileri */}
-                <Card
-                    className="flex items-center gap-3 p-0 cursor-pointer hover:bg-accent transition-colors h-12"
-                    onClick={() => router.push('/profil')}
-                >
-                    <div className="flex items-center gap-3 px-3 h-full">
-                        <Avatar className="h-7 w-7">
-                            <AvatarImage
-                                src={user?.vehiclemodels?.[0]?.image ?
-                                    `https://instatistik.com/lixhium/${user.vehiclemodels[0].image}` :
-                                    ''}
-                                alt="Araç"
-                                className="object-contain"
-                            />
-                            <AvatarFallback>
-                                {user?.vehiclemodels?.[0]?.brandname?.[0] || 'A'}
-                            </AvatarFallback>
-                        </Avatar>
-                        <div className="flex flex-col justify-center">
-                            <span className="text-sm font-medium leading-none">
-                                {user?.name}
-                            </span>
-                            <span className="text-xs text-muted-foreground leading-none mt-1">
-                                {user?.vehiclemodels?.[0]?.brandname} {user?.vehiclemodels?.[0]?.name}
-                            </span>
-                        </div>
-                    </div>
-                </Card>
-
-                {/* Arama çubuğu ve konum butonu */}
-                <div ref={searchRef} className="flex-grow flex flex-col">
-                    <div className="relative flex items-center w-[40%]">
+                {/* Arama çubuğu ve butonlar container'ı */}
+                <div ref={searchRef} className="flex-grow flex items-center gap-2">
+                    {/* Arama çubuğu container'ı */}
+                    <div className="relative flex-grow sm:w-[40%] sm:flex-grow-0">
                         <Card className="p-0 w-full">
                             <div className="relative">
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -560,133 +583,133 @@ export default function MapPage() {
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     onFocus={() => setIsSearchFocused(true)}
-                                    className="pl-10 rounded-lg border-none h-12 text-lg bg-white"
+                                    className="pl-10 rounded-lg border-none h-12 text-base sm:text-lg bg-white"
                                 />
                             </div>
                         </Card>
 
-                        {/* Butonlar */}
-                        <div className="flex gap-2 ml-2">
-                            {/* Konum butonu */}
-                            <Button
-                                onClick={() => {
-                                    if (userLocation && map) {
-                                        map.panTo(userLocation);
-                                        map.setZoom(15);
-                                    } else {
-                                        navigator.geolocation.getCurrentPosition(
-                                            (position) => {
-                                                const location = {
-                                                    lat: position.coords.latitude,
-                                                    lng: position.coords.longitude
-                                                };
-                                                setUserLocation(location);
-                                                if (map) {
-                                                    map.panTo(location);
-                                                    map.setZoom(15);
-                                                }
-                                            },
-                                            (error) => {
-                                                console.error("Konum alınamadı:", error);
-                                            },
-                                            {
-                                                enableHighAccuracy: true,
-                                                timeout: 5000,
-                                                maximumAge: 0
-                                            }
-                                        );
-                                    }
-                                }}
-                                className="h-12 w-12 rounded-full shadow-lg bg-white"
-                                variant="secondary"
-                            >
-                                <Navigation className="h-5 w-5" />
-                            </Button>
-
-                            {/* Filtreler butonu */}
-                            <Sheet open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
-                                <SheetTrigger asChild>
+                        {/* Arama sonuçları dropdown'u */}
+                        {isSearchFocused && searchResults.length > 0 && (
+                            <Card className="absolute top-full left-0 right-0 mt-1 max-h-[400px] overflow-y-auto border-t z-50 w-full">
+                                {searchResults.map((station) => (
                                     <Button
-                                        className="h-12 w-12 rounded-full shadow-lg bg-white"
-                                        variant="secondary"
+                                        key={station.id}
+                                        variant="ghost"
+                                        className="w-full justify-start px-4 py-3 hover:bg-accent text-sm sm:text-base"
+                                        onClick={() => handleStationSelect(station)}
                                     >
-                                        <Settings className="h-5 w-5" />
+                                        <div className="text-left">
+                                            <p className="font-medium truncate">{station.name}</p>
+                                            <p className="text-sm text-muted-foreground truncate">{station.address}</p>
+                                        </div>
                                     </Button>
-                                </SheetTrigger>
-                                <SheetContent side="right">
-                                    <SheetHeader>
-                                        <SheetTitle>Filtreler</SheetTitle>
-                                    </SheetHeader>
-                                    <div className="py-6 space-y-6">
-                                        {/* İstasyon Durumu */}
-                                        <div className="space-y-4">
-                                            <h4 className="font-medium">İstasyon Durumu</h4>
-                                            <div className="flex items-center space-x-2">
-                                                <Switch
-                                                    checked={showAvailableOnly}
-                                                    onCheckedChange={setShowAvailableOnly}
-                                                />
-                                                <Label>Sadece Müsait İstasyonlar</Label>
-                                            </div>
-                                        </div>
-
-                                        {/* Şarj Tipi */}
-                                        <div className="space-y-4">
-                                            <h4 className="font-medium">Şarj Tipi</h4>
-                                            <div className="grid gap-2">
-                                                <div className="flex items-center space-x-2">
-                                                    <Switch
-                                                        id="ac"
-                                                        checked={showAC}
-                                                        onCheckedChange={setShowAC}
-                                                    />
-                                                    <Label htmlFor="ac">AC</Label>
-                                                </div>
-                                                <div className="flex items-center space-x-2">
-                                                    <Switch
-                                                        id="dc"
-                                                        checked={showDC}
-                                                        onCheckedChange={setShowDC}
-                                                    />
-                                                    <Label htmlFor="dc">DC</Label>
-                                                </div>
-                                                <div className="flex items-center space-x-2">
-                                                    <Switch
-                                                        id="hpc"
-                                                        checked={showHPC}
-                                                        onCheckedChange={setShowHPC}
-                                                    />
-                                                    <Label htmlFor="hpc">HPC (180+ kW)</Label>
-                                                </div>
-                                            </div>
-                                        </div>
-
-
-
-                                    </div>
-                                </SheetContent>
-                            </Sheet>
-                        </div>
+                                ))}
+                            </Card>
+                        )}
                     </div>
 
-                    {/* Arama sonuçları dropdown'u */}
-                    {isSearchFocused && searchResults.length > 0 && (
-                        <Card className="absolute top-full left-0 right-0 mt-1 max-h-[400px] overflow-y-auto border-t z-50 w-[45%]">
-                            {searchResults.map((station) => (
+                    {/* Butonlar */}
+                    <div className="flex gap-2 shrink-0">
+                        {/* Konum butonu */}
+                        <Button
+                            onClick={() => {
+                                if (userLocation && map) {
+                                    map.panTo(userLocation);
+                                    map.setZoom(15);
+                                } else {
+                                    navigator.geolocation.getCurrentPosition(
+                                        (position) => {
+                                            const location = {
+                                                lat: position.coords.latitude,
+                                                lng: position.coords.longitude
+                                            };
+                                            setUserLocation(location);
+                                            if (map) {
+                                                map.panTo(location);
+                                                map.setZoom(15);
+                                            }
+                                        },
+                                        (error) => {
+                                            console.error("Konum alınamadı:", error);
+                                        },
+                                        {
+                                            enableHighAccuracy: true,
+                                            timeout: 5000,
+                                            maximumAge: 0
+                                        }
+                                    );
+                                }
+                            }}
+                            className="h-12 w-12 rounded-full shadow-lg bg-white shrink-0"
+                            variant="secondary"
+                        >
+                            <Navigation className="h-5 w-5" />
+                        </Button>
+
+                        {/* Filtreler butonu */}
+                        <Sheet open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
+                            <SheetTrigger asChild>
                                 <Button
-                                    key={station.id}
-                                    variant="ghost"
-                                    className="w-full justify-start px-4 py-3 hover:bg-accent"
-                                    onClick={() => handleStationSelect(station)}
+                                    className="h-12 w-12 rounded-full shadow-lg bg-white shrink-0"
+                                    variant="secondary"
                                 >
-                                    <div className="text-left">
-                                        <p className="font-medium">{station.name}</p>
-                                        <p className="text-sm text-muted-foreground">{station.address}</p>
-                                    </div>
+                                    <Settings className="h-5 w-5" />
                                 </Button>
-                            ))}
-                        </Card>
-                    )}
+                            </SheetTrigger>
+                            <SheetContent side="right">
+                                <SheetHeader>
+                                    <SheetTitle>Filtreler</SheetTitle>
+                                </SheetHeader>
+                                <div className="py-6 space-y-6">
+                                    {/* İstasyon Durumu */}
+                                    <div className="space-y-4">
+                                        <h4 className="font-medium">İstasyon Durumu</h4>
+                                        <div className="flex items-center space-x-2">
+                                            <Switch
+                                                checked={showAvailableOnly}
+                                                onCheckedChange={setShowAvailableOnly}
+                                            />
+                                            <Label>Sadece Müsait İstasyonlar</Label>
+                                        </div>
+                                    </div>
+
+                                    {/* Şarj Tipi */}
+                                    <div className="space-y-4">
+                                        <h4 className="font-medium">Şarj Tipi</h4>
+                                        <div className="grid gap-2">
+                                            <div className="flex items-center space-x-2">
+                                                <Switch
+                                                    id="ac"
+                                                    checked={showAC}
+                                                    onCheckedChange={setShowAC}
+                                                />
+                                                <Label htmlFor="ac">AC</Label>
+                                            </div>
+                                            <div className="flex items-center space-x-2">
+                                                <Switch
+                                                    id="dc"
+                                                    checked={showDC}
+                                                    onCheckedChange={setShowDC}
+                                                />
+                                                <Label htmlFor="dc">DC</Label>
+                                            </div>
+                                            <div className="flex items-center space-x-2">
+                                                <Switch
+                                                    id="hpc"
+                                                    checked={showHPC}
+                                                    onCheckedChange={setShowHPC}
+                                                />
+                                                <Label htmlFor="hpc">HPC (180+ kW)</Label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+                            </SheetContent>
+                        </Sheet>
+                    </div>
                 </div>
             </div>
         </>

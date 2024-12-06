@@ -88,26 +88,24 @@ export default function Tarifeler() {
 
     return (
         <div className="min-h-screen bg-background">
-            <div className="container mx-auto py-10 space-y-6">
-                {/* Başlık ve Geri Butonu */}
-                <div className="flex items-center justify-between">
-                    <div className="space-y-1">
-                        <div className="flex items-center gap-4">
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => window.close()}
-                                className="hover:bg-accent"
-                            >
-                                <ChevronLeft className="h-6 w-6" />
-                            </Button>
-                            <h1 className="text-3xl font-bold tracking-tight">Şarj Operatörleri ve Tarifeleri</h1>
-                        </div>
-                        <p className="text-muted-foreground">Tüm operatörlerin güncel fiyatlandırmaları</p>
+            <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
+
+                <div className="space-y-1">
+                    <div className="flex items-center gap-4">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => window.close()}
+                            className="hover:bg-accent"
+                        >
+                            <ChevronLeft className="h-6 w-6" />
+                        </Button>
+                        <h1 className="text-3xl font-bold tracking-tight">Şarj Operatörleri ve Tarifeleri</h1>
                     </div>
+                    <p className="text-muted-foreground">Tüm operatörlerin güncel fiyatlandırmaları</p>
                 </div>
 
-                {/* Arama ve Filtre */}
+
                 <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
                     <div className="w-full sm:w-72">
                         <Input
@@ -127,13 +125,12 @@ export default function Tarifeler() {
                         </label>
                     </div>
                 </div>
-
-                {/* Tablo */}
+                <div className='p-2'></div>
                 <div className="rounded-lg border bg-card">
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead className="w-[100px]">Logo</TableHead>
+                                <TableHead className="w-[100px]"></TableHead>
                                 <TableHead
                                     className="cursor-pointer hover:text-primary"
                                     onClick={() => handleSort('name')}

@@ -329,14 +329,7 @@ export default function Profil() {
                     </div>
                     <p className="text-muted-foreground">Hesap bilgilerinizi görüntüleyin ve yönetin</p>
                 </div>
-                <Button
-                    variant="destructive"
-                    onClick={handleLogout}
-                    className="gap-2"
-                >
-                    <LogOut className="h-4 w-4" />
-                    Çıkış Yap
-                </Button>
+
             </div>
 
             {/* Profil Bilgileri */}
@@ -406,7 +399,7 @@ export default function Profil() {
                             <Label>E-posta</Label>
                             <p className="text-lg font-medium">{user.mail}</p>
                         </div>
-                        <div className='flex flex-row items-center'>
+                        {/* <div className='flex flex-row items-center'>
                             <Label>Üyelik Durumu</Label>
                             <div className='pl-2'>
                                 <Badge
@@ -417,7 +410,7 @@ export default function Profil() {
                                 </Badge>
                             </div>
 
-                        </div>
+                        </div> */}
                     </div>
                 </CardContent>
             </Card>
@@ -563,6 +556,17 @@ export default function Profil() {
                     </CardContent>
                 )}
             </Card>
+
+            <div className="flex justify-end">
+                <Button
+                    variant="destructive"
+                    onClick={handleLogout}
+                    className="gap-2"
+                >
+                    <LogOut className="h-4 w-4" />
+                    Çıkış Yap
+                </Button>
+            </div>
 
             {/* Araç Ekleme Dialog'u */}
             <Dialog open={isAddVehicleOpen} onOpenChange={setIsAddVehicleOpen}>
